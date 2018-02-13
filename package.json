@@ -2,7 +2,7 @@
   "name": "vue-paginate",
   "version": "3.6.0",
   "description": "A simple vue.js plugin to paginate data",
-  "main": "dist/vue-paginate.js",
+  "main": "dist/vue-paginate.min.js",
   "scripts": {
     "build": "rollup --environment NODE_ENV:production -c build/rollup.config.js && uglifyjs dist/vue-paginate.js -cm --comments -o dist/vue-paginate.min.js",
     "test": "./node_modules/karma/bin/karma start",
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/TahaSh/vue-paginate.git"
+    "url": "https://github.com/mib200/vue-paginate.git"
   },
   "keywords": [
     "paginate",
@@ -75,6 +75,6 @@
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"
   },
-  "author": "Taha Shashtari",
+  "author": "Manish Kumar",
   "license": "MIT"
 }
