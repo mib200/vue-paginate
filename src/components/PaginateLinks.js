@@ -106,7 +106,7 @@ export default {
         warn(`To fix that issue you may need to use :async="true" on <paginate-links> component to allow for asyncronous rendering`, this.$parent, 'warn')
         return
       }
-      this.numberOfPages = Math.ceil(this.target.list.length / this.target.per)
+      this.numberOfPages = Math.ceil((this.target.listSize || this.target.list.length) / this.target.per)
       this.listOfPages = getListOfPageNumbers(this.numberOfPages)
     }
   },

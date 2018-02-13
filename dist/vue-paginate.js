@@ -1,6 +1,6 @@
 /**
- * vue-paginate v3.5.1
- * (c) 2018 Taha Shashtari
+ * vue-paginate v3.6.0
+ * (c) 2018 Manish Kumar
  * @license MIT
  */
 (function (global, factory) {
@@ -55,6 +55,13 @@
         type: Array,
         required: true
       },
+      listSize: {
+        type: Number,
+      },
+      async: {
+        type: Boolean,
+        default: false
+      },
       per: {
         type: Number,
         default: 3,
@@ -67,24 +74,30 @@
         default: 'ul'
       }
     },
-    data: function data () {
+    data: function data() {
       return {
-        initialListSize: this.list.length
+        paginationInProgress: false,
       }
     },
     computed: {
+      initialListSize: function initialListSize() {
+        return this.listSize || this.list.length;
+      },
       currentPage: {
         get: function get () {
           if (this.$parent.paginate[this.name]) {
+            // console.log(this.$parent.paginate[this.name]);
             return this.$parent.paginate[this.name].page
           }
         },
-        set: function set (page) {
+        set: function set(page) {
           this.$parent.paginate[this.name].page = page
+          console.warn('paginating the list again as the current page is updated');
+          this.paginateList();
         }
       },
       pageItemsCount: function pageItemsCount () {
-        var numOfItems = this.list.length
+        var numOfItems = this.initialListSize
         var first = this.currentPage * this.per + 1
         var last = Math.min((this.currentPage * this.per) + this.per, numOfItems)
         return (first + "-" + last + " of " + numOfItems)
@@ -101,29 +114,43 @@
       this.paginateList()
     },
     watch: {
-      currentPage: function currentPage () {
-        this.paginateList()
+      // currentPage () {
+      //   this.paginateList()
+      // },
+      initialListSize: function initialListSize$1() {
+        console.warn('paginate list coz intialsize was changed');
+        this.currentPage = 0
       },
-      list: function list () {
-        if (this.initialListSize !== this.list.length) {
-          // On list change, refresh the paginated list only if list size has changed
-          this.currentPage = 0
-        }
-        this.paginateList()
+      list: function list() {
+        console.warn('list updated: ', this.initialListSize, this.listSize);
+        // if (this.initialListSize !== (this.listSize || this.list.length)) {
+        //   // On list change, refresh the paginated list only if list size has changed
+        //   console.warn('resetting page to 1 as the list sizes have changed: ', this.initialListSize, this.listSize);
+        //   this.currentPage = 0
+        // }
+        this.paginateList();
       },
       per: function per () {
         this.currentPage = 0
-        this.paginateList()
+        // this.paginateList()
       }
     },
     methods: {
-      paginateList: function paginateList () {
-        var index = this.currentPage * this.per
+      paginateList: function paginateList() {
+        var this$1 = this;
+
+        if (this.paginationInProgress) { return; }
+        this.paginationInProgress = true;
+        var index = this.async ? 0 : this.currentPage * this.per;
+        // console.log(this.listSize, this.list.length && JSON.stringify(this.list[0]), index);
         var paginatedList = this.list.slice(index, index + this.per)
         this.$parent.paginate[this.name].list = paginatedList
+        setTimeout(function () {
+          this$1.paginationInProgress = false;
+        }, 50);
       },
       goToPage: function goToPage (page) {
-        var maxPage = Math.ceil(this.list.length / this.per)
+        var maxPage = Math.ceil(this.initialListSize / this.per)
         if (page > maxPage) {
           warn(("You cannot go to page " + page + ". The last page is " + maxPage + "."), this.$parent)
           return
@@ -295,7 +322,7 @@
           warn("To fix that issue you may need to use :async=\"true\" on <paginate-links> component to allow for asyncronous rendering", this.$parent, 'warn')
           return
         }
-        this.numberOfPages = Math.ceil(this.target.list.length / this.target.per)
+        this.numberOfPages = Math.ceil((this.target.listSize || this.target.list.length) / this.target.per)
         this.listOfPages = getListOfPageNumbers(this.numberOfPages)
       }
     },
