@@ -18,7 +18,7 @@ module.exports = {
   banner:
 `/**
  * vue-paginate v${version}
- * (c) ${new Date().getFullYear()} Taha Shashtari
+ * (c) ${new Date().getFullYear()} Manish Kumar
  * @license MIT
  */`
 }
