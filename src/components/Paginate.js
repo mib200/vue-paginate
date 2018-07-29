@@ -93,15 +93,18 @@ export default {
   },
   methods: {
     paginateList() {
-      if (this.paginationInProgress) return;
+      if (this.paginationInProgress) {
+        console.log('pagination in progress, thus returning');
+        return;
+      };
       this.paginationInProgress = true;
       const index = this.async ? 0 : this.currentPage * this.per;
       // console.log(this.listSize, this.list.length && JSON.stringify(this.list[0]), index);
       const paginatedList = this.list.slice(index, index + this.per)
       this.$parent.paginate[this.name].list = paginatedList
-      setTimeout(() => {
-        this.paginationInProgress = false;
-      }, 50);
+      // setTimeout(() => {
+      this.paginationInProgress = false;
+      // }, 50);
     },
     goToPage (page) {
       const maxPage = Math.ceil(this.initialListSize / this.per)
